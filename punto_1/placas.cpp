@@ -117,13 +117,13 @@ void solveLaplaceEq(void)
 					if(j==307)				
 					{
 					
-						V[i][j]=-Vo/2;
+						Vnew[i][j]=-Vo/2;
 					}
 				
 					else if(j==204)
 					{
 					
-						V[i][j]=Vo/2;
+						Vnew[i][j]=Vo/2;
 					}
 				}
 			
