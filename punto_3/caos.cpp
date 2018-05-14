@@ -21,6 +21,7 @@ float n1,n2,n3,n4;
 void evolucion_rk4(void);
 float p1_punto(float q1);
 float p2_punto(float q1,float q2);
+float new_rk4(float q1_old,float q2_old,float p1_old,float p2_old);
 int main()
 {
 	t[0]=0.0;
@@ -36,8 +37,10 @@ int main()
 	q2[0]=-a;
 	p2[0]=0;
 	evolucion_rk4();
-	for(int i=0;i<n;i++)
+	for(int i=1;i<n;i++)
 	{
+			
+		//q1[i],p1[i],q2[i],p2[i]=new_rk4(q1[i-1],q2[i-1],p1[i-1],p2[i-1]);
 		cout<<q1[i]<< endl;	
 	}
 	for(int i=1;i<n;i++)
@@ -51,6 +54,7 @@ int main()
 			cout << q2[i] << " "<< p2[i]<< endl;
 		}			
 	}
+	
 	return 0;
 	
 }
@@ -104,8 +108,59 @@ void evolucion_rk4(void)
 
 		q1[i]=q1[i-1] + (1.0/6.0)*(k1_q1 + 2*k2_q1 + 2*k3_q1 + k4_q1);
 		p1[i]=p1[i-1] + (1.0/6.0)*(k1_p1 + 2*k2_p1 + 2*k3_p1 + k4_p1);
-		q1[i]=q1[i-1] + (1.0/6.0)*(k1_q2 + 2*k2_q2 + 2*k3_q2 + k4_q2);
-		q1[i]=q1[i-1] + (1.0/6.0)*(k1_p2 + 2*k2_p2 + 2*k3_p2 + k4_p2);
+		q2[i]=q2[i-1] + (1.0/6.0)*(k1_q2 + 2*k2_q2 + 2*k3_q2 + k4_q2);
+		p2[i]=p2[i-1] + (1.0/6.0)*(k1_p2 + 2*k2_p2 + 2*k3_p2 + k4_p2);
 	}
+
+
+}
+float new_rk4(float q1_old,float q2_old,float p1_old,float p2_old)
+{
+	float k1_q1,k2_q1,k3_q1,k4_q1;
+	float k1_q2,k2_q2,k3_q2,k4_q2;
+	float k1_p1,k2_p1,k3_p1,k4_p1;
+	float k1_p2,k2_p2,k3_p2,k4_p2;
 		
+	k1_q1=p1_old;
+	k1_p1=p1_punto(q1_old);
+	k1_q2=p2_old;
+	k1_p2=p2_punto(q1_old,q2_old);
+	
+	
+	float q1_1= q1_old + (dt/2.0)*k1_q1;
+	float q2_1= q2_old + (dt/2.0)*k1_q2;
+	float p1_1= p1_old + (dt/2.0)*k1_p1;
+	float p2_1= p2_old + (dt/2.0)*k1_p2;
+	k2_q1=p1_1;
+	k2_p1=p1_punto(q1_1);
+	k2_q2=p2_1;
+	k2_p2=p2_punto(q1_1,q2_1);
+
+
+	float q1_2= q1_old + (dt/2.0)*k2_q1;
+	float q2_2= q2_old + (dt/2.0)*k2_q2;
+	float p1_2= p1_old + (dt/2.0)*k2_p1;
+	float p2_2= p2_old + (dt/2.0)*k2_p2;
+	k3_q1=p1_2;
+	k3_p1=p1_punto(q1_2);
+	k3_q2=p2_2;
+	k3_p2=p2_punto(q1_2,q2_2);
+
+
+
+	float q1_3= q1_old + (dt)*k3_q1;
+	float q2_3= q2_old + (dt)*k3_q2;
+	float p1_3= p1_old + (dt)*k3_p1;
+	float p2_3= p2_old + (dt)*k3_p2;
+	k4_q1=p1_3;
+	k4_p1=p1_punto(q1_3);
+	k4_q2=p2_3;
+	k4_p2=p2_punto(q1_3,q2_3);
+
+	float q1_new=q1_old + dt*(1.0/6.0)*(k1_q1 + 2*k2_q1 + 2*k3_q1 + k4_q1);
+	float p1_new=p1_old + dt*(1.0/6.0)*(k1_p1 + 2*k2_p1 + 2*k3_p1 + k4_p1);
+	float q2_new=q2_old + dt*(1.0/6.0)*(k1_q2 + 2*k2_q2 + 2*k3_q2 + k4_q2);
+	float p2_new=p2_old + dt*(1.0/6.0)*(k1_p2 + 2*k2_p2 + 2*k3_p2 + k4_p2);
+	return q1_new, p1_new,q2_new,p2_new;
+	
 }
